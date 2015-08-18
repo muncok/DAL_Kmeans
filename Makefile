@@ -21,7 +21,7 @@ kmeans_seq: kmeans_seq.o kmeans_main.o
 opencl: kmeans_opencl
 
 kmeans_opencl: kmeans_opencl.o kmeans_main.o
-	${CXX} $^ -o $@ ${LDFLAGS} -lOpenCL
+	${CXX} $^ -g -o $@ ${LDFLAGS} -lOpenCL
 
 
 clean:
