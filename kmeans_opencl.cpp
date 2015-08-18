@@ -85,7 +85,7 @@ void kmeans(int iteration_n, int class_n, int data_n, Point* centroids, Point* d
 
 
 	cl_mem buf_centroids, buf_data, buf_parts;
- 	buf_centroids = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(Point) * class_n , NULL, &err);
+ 	buf_centroids = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Point) * class_n , NULL, &err);
 	CHECK_ERROR(err);
  	buf_data = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(Point) * data_n  , NULL, &err);
 	CHECK_ERROR(err);
@@ -108,7 +108,7 @@ void kmeans(int iteration_n, int class_n, int data_n, Point* centroids, Point* d
 
 	size_t global_size = data_n;
 	size_t local_size = 256;
-	global_size = (global_size + local_size - 1) / local_size;
+	global_size = (global_size + local_size - 1) / local_size * local_size;
 	//global_size[0] = (global_size[0] + local_size[0] -1) / local_size[0] * local_size[0];
 	//global_size[1] = (global_size[1] + local_size[1] -1) / local_size[1] * local_size[1];
 	
@@ -129,8 +129,6 @@ void kmeans(int iteration_n, int class_n, int data_n, Point* centroids, Point* d
 
 			clEnqueueReadBuffer(queue, buf_parts, CL_TRUE, 0, sizeof(int)*data_n, partitioned, 0, NULL,NULL);	
 
-			printf("assign is OK \n");
-
 			////////////////////////////////////////////////////////////
 			// Loop indices for iteration, data and class
 			int  data_i, class_i;
@@ -143,7 +141,6 @@ void kmeans(int iteration_n, int class_n, int data_n, Point* centroids, Point* d
 					centroids[class_i].y = 0.0;
 					count[class_i] = 0;
 			}
-			printf("updata1 is OK \n");
 			// Sum up and count data for each class
 			for (data_i = 0; data_i < data_n; data_i++) {         
 					centroids[partitioned[data_i]].x += data[data_i].x;
